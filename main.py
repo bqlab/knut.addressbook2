@@ -1,38 +1,86 @@
 from DList import *
+from avl import *
+from chaining import *
+
+table = Chaining(20)
+list = DList()
+tree = AVL()
 
 
 def search():
-    if book.is_empty():
+    if list.is_empty():
         print("Nothing registered.")
         return None
     while True:
         print("\n---SEARCH---")
-        target_pos = locate(input("Input: "))
-        if target_pos is None:
-            print("Cannot Found.")
-            return None
+        print("1.  Integrated")
+        print("2.  To name")
+        print("3.  To number")
+        n = input("SELECT(1~3): ")
+        if n == '1':
+            target_pos = locate(input("Input: "))
+            if target_pos is None:
+                print("Cannot Found.")
+                return None
+            else:
+                target = list.head.next
+                for i in range(0, target_pos, 1):
+                    target = target.next
+                target.item.print_list()
+                return target
+        elif n == '2':
+            while True:
+                k = input("Input: ")
+                target_pos = locate(k)
+                if is_number(k) is True:
+                    print("You input a wrong data.")
+                else:
+                    target = table.get(k)
+                    if target is None:
+                        print("Cannot Found.")
+                        return None
+                    else:
+                        target.print_list()
+                        t = list.head.next
+                        for i in range(0, target_pos, 1):
+                            t = target.next
+                        return t
+        elif n == '3':
+            while True:
+                k = input("Input: ")
+                target_pos = locate(k)
+                if is_number(k) is False:
+                    print("You input a wrong data.")
+                else:
+                    k = int(k)
+                    target = tree.get(k)
+                    if target is None:
+                        print("Cannot Found.")
+                        return None
+                    else:
+                        target.print_list()
+                        t = list.head.next
+                        for i in range(0, target_pos, 1):
+                            t = target.next
+                        return t
         else:
-            target = book.head.next
-            for i in range(0, target_pos, 1):
-                target = target.next
-            target.item.print_list()
-            return target
+            print("You input a wrong data.")
 
 
 def locate(target):
     target_pos = 0
-    if book.is_empty():
+    if list.is_empty():
         return None
     else:
-        p = book.head.next
+        p = list.head.next
         if not is_number(target):
-            while p != book.tail:
+            while p != list.tail:
                 if p.item.head.next.item == target:
                     return target_pos
                 target_pos += 1
                 p = p.next
         else:
-            while p != book.tail:
+            while p != list.tail:
                 if p.item.head.next.next.item == target:
                     return target_pos
                 target_pos += 1
@@ -41,6 +89,8 @@ def locate(target):
 
 
 def register():
+    if list.size == 20:
+        print("Already be full")
     p = DList()
     print("\n---REGISTER---")
     while True:
@@ -77,7 +127,8 @@ def register():
             break
         else:
             print("You input a wrong data.")
-    book.insert_before(book.tail, p)
+    list.insert_before(list.tail, p)
+    sync()
     print("Processed.")
 
 
@@ -99,6 +150,7 @@ def modify():
                     if not is_number(name) and len(name) <= 20:
                         if locate(name) is None or name is target.head.next.item:
                             target.item.head.next.item = name
+                            sync()
                             print("Processed.")
                             break
                         else:
@@ -111,6 +163,7 @@ def modify():
                     if is_number(number) and len(number) <= 11:
                         if locate(number) is None or number is target.head.next.next.item:
                             target.item.head.next.next.item = number
+                            sync()
                             print("Processed.")
                             break
                         else:
@@ -122,6 +175,7 @@ def modify():
                     email = input("Email(Up to 100): ")
                     if '@' in email and len(email) <= 100:
                         target.item.head.next.next.next.item = email
+                        sync()
                         print("Processed.")
                         break
                     else:
@@ -131,6 +185,7 @@ def modify():
                     address = input("Address(Up to 100): ")
                     if len(address) <= 100:
                         target.item.head.next.next.next.next.item = address
+                        sync()
                         print("Processed.")
                         break
                     else:
@@ -152,10 +207,21 @@ def delete():
             r = target.next
             f.next = r
             r.prev = f
-            book.size -= 1
+            list.size -= 1
+            sync()
             print("Processed.")
         else:
             print("Canceled.")
+
+
+def sync():
+    table.set_empty(20)
+    tree.set_empty()
+    p = list.head.next
+    while p != list.tail:
+        table.put(p.item.head.next.item, p.item)
+        tree.put(int(p.item.head.next.next.item), p.item)
+        p = p.next
 
 
 def is_number(number):

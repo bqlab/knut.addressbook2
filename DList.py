@@ -40,17 +40,16 @@ class DList:
         return x.item
 
     def print_list(self):
-        if self.is_empty():
-            print('리스트 비어있음')
-        else:
-            p = self.head.next
-            while p != self.tail:
-                if p.next != self.tail:
-                    print(p.item, ' <=> ', end='')
-                else:
-                    print(p.item)
-                p = p.next
+        print("---RESULT---")
+        p = self.head.next
+        while p != self.tail:
+            print(p.item)
+            p = p.next
+        print("------------")
 
 
 class EmptyError(Exception):
     pass
+
+
+
