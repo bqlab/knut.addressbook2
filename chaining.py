@@ -14,7 +14,7 @@ class Chaining:
         self.a = [None] * self.M
 
     def hash(self, key):
-        return int(ord(key[random.randint(0, len(key) - 1)])) % self.M #해시함수(문자열용)
+        return (int(ord(key[len(key) - 1])) + len(key)) % self.M  # 해시함수(문자열용)
 
     def put(self, key, data):  # 삽입 연산
         i = self.hash(key)
